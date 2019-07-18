@@ -1,8 +1,6 @@
 require('./core/bootstrap');
 require('./core/plugins');
-
-window.ApplicationStore = {};
-
+require('./ApplicatonStore');
 require('./core/register/eventhandler');
 require('./core/register/mixins');
 require('./core/register/components');
