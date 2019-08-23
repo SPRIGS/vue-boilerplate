@@ -1,6 +1,6 @@
 require('./core/bootstrap');
 require('./core/plugins');
-require('./ApplicatonStore');
+require('./ApplicationStore');
 require('./core/register/eventhandler');
 require('./core/register/mixins');
 require('./core/register/components');
