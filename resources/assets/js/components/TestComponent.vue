@@ -1,5 +1,7 @@
 <template>
-    <div></div>
+    <div class="text-center">
+        <h3>Say hello to my little test component!</h3>
+    </div>
 </template>
 <script>
 export default {

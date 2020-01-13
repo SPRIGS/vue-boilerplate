@@ -474,6 +474,9 @@
                 var buildURL = __webpack_require__(
                     /*! ./../helpers/buildURL */ './node_modules/axios/lib/helpers/buildURL.js'
                 );
+                var buildFullPath = __webpack_require__(
+                    /*! ../core/buildFullPath */ './node_modules/axios/lib/core/buildFullPath.js'
+                );
                 var parseHeaders = __webpack_require__(
                     /*! ./../helpers/parseHeaders */ './node_modules/axios/lib/helpers/parseHeaders.js'
                 );
@@ -506,10 +509,14 @@
                                 'Basic ' + btoa(username + ':' + password);
                         }
 
+                        var fullPath = buildFullPath(
+                            config.baseURL,
+                            config.url
+                        );
                         request.open(
                             config.method.toUpperCase(),
                             buildURL(
-                                config.url,
+                                fullPath,
                                 config.params,
                                 config.paramsSerializer
                             ),
@@ -604,11 +611,15 @@
 
                         // Handle timeout
                         request.ontimeout = function handleTimeout() {
+                            var timeoutErrorMessage =
+                                'timeout of ' + config.timeout + 'ms exceeded';
+                            if (config.timeoutErrorMessage) {
+                                timeoutErrorMessage =
+                                    config.timeoutErrorMessage;
+                            }
                             reject(
                                 createError(
-                                    'timeout of ' +
-                                        config.timeout +
-                                        'ms exceeded',
+                                    timeoutErrorMessage,
                                     config,
                                     'ECONNABORTED',
                                     request
@@ -630,7 +641,7 @@
                             // Add xsrf header
                             var xsrfValue =
                                 (config.withCredentials ||
-                                    isURLSameOrigin(config.url)) &&
+                                    isURLSameOrigin(fullPath)) &&
                                 config.xsrfCookieName
                                     ? cookies.read(config.xsrfCookieName)
                                     : undefined;
@@ -662,8 +673,8 @@
                         }
 
                         // Add withCredentials to request if needed
-                        if (config.withCredentials) {
-                            request.withCredentials = true;
+                        if (!utils.isUndefined(config.withCredentials)) {
+                            request.withCredentials = !!config.withCredentials;
                         }
 
                         // Add responseType to request if needed
@@ -977,9 +988,15 @@
                     }
 
                     config = mergeConfig(this.defaults, config);
-                    config.method = config.method
-                        ? config.method.toLowerCase()
-                        : 'get';
+
+                    // Set config.method
+                    if (config.method) {
+                        config.method = config.method.toLowerCase();
+                    } else if (this.defaults.method) {
+                        config.method = this.defaults.method.toLowerCase();
+                    } else {
+                        config.method = 'get';
+                    }
 
                     // Hook up interceptors middleware
                     var chain = [dispatchRequest, undefined];
@@ -1123,6 +1140,40 @@
                 /***/
             },
 
+        /***/ './node_modules/axios/lib/core/buildFullPath.js':
+            /*!******************************************************!*\
+  !*** ./node_modules/axios/lib/core/buildFullPath.js ***!
+  \******************************************************/
+            /*! no static exports found */
+            /***/ function(module, exports, __webpack_require__) {
+                'use strict';
+
+                var isAbsoluteURL = __webpack_require__(
+                    /*! ../helpers/isAbsoluteURL */ './node_modules/axios/lib/helpers/isAbsoluteURL.js'
+                );
+                var combineURLs = __webpack_require__(
+                    /*! ../helpers/combineURLs */ './node_modules/axios/lib/helpers/combineURLs.js'
+                );
+
+                /**
+                 * Creates a new URL by combining the baseURL with the requestedURL,
+                 * only when the requestedURL is not already an absolute URL.
+                 * If the requestURL is absolute, this function returns the requestedURL untouched.
+                 *
+                 * @param {string} baseURL The base URL
+                 * @param {string} requestedURL Absolute or relative URL to combine
+                 * @returns {string} The combined full path
+                 */
+                module.exports = function buildFullPath(baseURL, requestedURL) {
+                    if (baseURL && !isAbsoluteURL(requestedURL)) {
+                        return combineURLs(baseURL, requestedURL);
+                    }
+                    return requestedURL;
+                };
+
+                /***/
+            },
+
         /***/ './node_modules/axios/lib/core/createError.js':
             /*!****************************************************!*\
   !*** ./node_modules/axios/lib/core/createError.js ***!
@@ -1179,12 +1230,6 @@
                 var defaults = __webpack_require__(
                     /*! ../defaults */ './node_modules/axios/lib/defaults.js'
                 );
-                var isAbsoluteURL = __webpack_require__(
-                    /*! ./../helpers/isAbsoluteURL */ './node_modules/axios/lib/helpers/isAbsoluteURL.js'
-                );
-                var combineURLs = __webpack_require__(
-                    /*! ./../helpers/combineURLs */ './node_modules/axios/lib/helpers/combineURLs.js'
-                );
 
                 /**
                  * Throws a `Cancel` if cancellation has been requested.
@@ -1204,11 +1249,6 @@
                 module.exports = function dispatchRequest(config) {
                     throwIfCancellationRequested(config);
 
-                    // Support baseURL config
-                    if (config.baseURL && !isAbsoluteURL(config.url)) {
-                        config.url = combineURLs(config.baseURL, config.url);
-                    }
-
                     // Ensure headers exist
                     config.headers = config.headers || {};
 
@@ -1223,7 +1263,7 @@
                     config.headers = utils.merge(
                         config.headers.common || {},
                         config.headers[config.method] || {},
-                        config.headers || {}
+                        config.headers
                     );
 
                     utils.forEach(
@@ -1361,8 +1401,38 @@
                     config2 = config2 || {};
                     var config = {};
 
+                    var valueFromConfig2Keys = [
+                        'url',
+                        'method',
+                        'params',
+                        'data'
+                    ];
+                    var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
+                    var defaultToConfig2Keys = [
+                        'baseURL',
+                        'url',
+                        'transformRequest',
+                        'transformResponse',
+                        'paramsSerializer',
+                        'timeout',
+                        'withCredentials',
+                        'adapter',
+                        'responseType',
+                        'xsrfCookieName',
+                        'xsrfHeaderName',
+                        'onUploadProgress',
+                        'onDownloadProgress',
+                        'maxContentLength',
+                        'validateStatus',
+                        'maxRedirects',
+                        'httpAgent',
+                        'httpsAgent',
+                        'cancelToken',
+                        'socketPath'
+                    ];
+
                     utils.forEach(
-                        ['url', 'method', 'params', 'data'],
+                        valueFromConfig2Keys,
                         function valueFromConfig2(prop) {
                             if (typeof config2[prop] !== 'undefined') {
                                 config[prop] = config2[prop];
@@ -1371,7 +1441,7 @@
                     );
 
                     utils.forEach(
-                        ['headers', 'auth', 'proxy'],
+                        mergeDeepPropertiesKeys,
                         function mergeDeepProperties(prop) {
                             if (utils.isObject(config2[prop])) {
                                 config[prop] = utils.deepMerge(
@@ -1389,27 +1459,7 @@
                     );
 
                     utils.forEach(
-                        [
-                            'baseURL',
-                            'transformRequest',
-                            'transformResponse',
-                            'paramsSerializer',
-                            'timeout',
-                            'withCredentials',
-                            'adapter',
-                            'responseType',
-                            'xsrfCookieName',
-                            'xsrfHeaderName',
-                            'onUploadProgress',
-                            'onDownloadProgress',
-                            'maxContentLength',
-                            'validateStatus',
-                            'maxRedirects',
-                            'httpAgent',
-                            'httpsAgent',
-                            'cancelToken',
-                            'socketPath'
-                        ],
+                        defaultToConfig2Keys,
                         function defaultToConfig2(prop) {
                             if (typeof config2[prop] !== 'undefined') {
                                 config[prop] = config2[prop];
@@ -1418,6 +1468,26 @@
                             }
                         }
                     );
+
+                    var axiosKeys = valueFromConfig2Keys
+                        .concat(mergeDeepPropertiesKeys)
+                        .concat(defaultToConfig2Keys);
+
+                    var otherKeys = Object.keys(config2).filter(
+                        function filterAxiosKeys(key) {
+                            return axiosKeys.indexOf(key) === -1;
+                        }
+                    );
+
+                    utils.forEach(otherKeys, function otherKeysDefaultToConfig2(
+                        prop
+                    ) {
+                        if (typeof config2[prop] !== 'undefined') {
+                            config[prop] = config2[prop];
+                        } else if (typeof config1[prop] !== 'undefined') {
+                            config[prop] = config1[prop];
+                        }
+                    });
 
                     return config;
                 };
@@ -1527,8 +1597,12 @@
 
                     function getDefaultAdapter() {
                         var adapter;
-                        // Only Node.JS has a process variable that is of [[Class]] process
-                        if (
+                        if (typeof XMLHttpRequest !== 'undefined') {
+                            // For browsers use XHR adapter
+                            adapter = __webpack_require__(
+                                /*! ./adapters/xhr */ './node_modules/axios/lib/adapters/xhr.js'
+                            );
+                        } else if (
                             typeof process !== 'undefined' &&
                             Object.prototype.toString.call(process) ===
                                 '[object process]'
@@ -1536,11 +1610,6 @@
                             // For node use HTTP adapter
                             adapter = __webpack_require__(
                                 /*! ./adapters/http */ './node_modules/axios/lib/adapters/xhr.js'
-                            );
-                        } else if (typeof XMLHttpRequest !== 'undefined') {
-                            // For browsers use XHR adapter
-                            adapter = __webpack_require__(
-                                /*! ./adapters/xhr */ './node_modules/axios/lib/adapters/xhr.js'
                             );
                         }
                         return adapter;
@@ -1901,6 +1970,9 @@
                 var utils = __webpack_require__(
                     /*! ./../utils */ './node_modules/axios/lib/utils.js'
                 );
+                var isValidXss = __webpack_require__(
+                    /*! ./isValidXss */ './node_modules/axios/lib/helpers/isValidXss.js'
+                );
 
                 module.exports = utils.isStandardBrowserEnv()
                     ? // Standard browser envs have full support of the APIs needed to test
@@ -1920,6 +1992,12 @@
                            */
                           function resolveURL(url) {
                               var href = url;
+
+                              if (isValidXss(url)) {
+                                  throw new Error(
+                                      'URL contains XSS injection attempt'
+                                  );
+                              }
 
                               if (msie) {
                                   // IE needs attribute set twice to normalize properties
@@ -1978,6 +2056,22 @@
                               return true;
                           };
                       })();
+
+                /***/
+            },
+
+        /***/ './node_modules/axios/lib/helpers/isValidXss.js':
+            /*!******************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/isValidXss.js ***!
+  \******************************************************/
+            /*! no static exports found */
+            /***/ function(module, exports, __webpack_require__) {
+                'use strict';
+
+                module.exports = function isValidXss(requestURL) {
+                    var xssRegex = /(\b)(on\w+)=|javascript|(<\s*)(\/*)script/gi;
+                    return xssRegex.test(requestURL);
+                };
 
                 /***/
             },
@@ -2148,9 +2242,6 @@
                 var bind = __webpack_require__(
                     /*! ./helpers/bind */ './node_modules/axios/lib/helpers/bind.js'
                 );
-                var isBuffer = __webpack_require__(
-                    /*! is-buffer */ './node_modules/axios/node_modules/is-buffer/index.js'
-                );
 
                 /*global toString:true*/
 
@@ -2166,6 +2257,33 @@
                  */
                 function isArray(val) {
                     return toString.call(val) === '[object Array]';
+                }
+
+                /**
+                 * Determine if a value is undefined
+                 *
+                 * @param {Object} val The value to test
+                 * @returns {boolean} True if the value is undefined, otherwise false
+                 */
+                function isUndefined(val) {
+                    return typeof val === 'undefined';
+                }
+
+                /**
+                 * Determine if a value is a Buffer
+                 *
+                 * @param {Object} val The value to test
+                 * @returns {boolean} True if value is a Buffer, otherwise false
+                 */
+                function isBuffer(val) {
+                    return (
+                        val !== null &&
+                        !isUndefined(val) &&
+                        val.constructor !== null &&
+                        !isUndefined(val.constructor) &&
+                        typeof val.constructor.isBuffer === 'function' &&
+                        val.constructor.isBuffer(val)
+                    );
                 }
 
                 /**
@@ -2231,16 +2349,6 @@
                  */
                 function isNumber(val) {
                     return typeof val === 'number';
-                }
-
-                /**
-                 * Determine if a value is undefined
-                 *
-                 * @param {Object} val The value to test
-                 * @returns {boolean} True if the value is undefined, otherwise false
-                 */
-                function isUndefined(val) {
-                    return typeof val === 'undefined';
                 }
 
                 /**
@@ -2508,31 +2616,6 @@
                 /***/
             },
 
-        /***/ './node_modules/axios/node_modules/is-buffer/index.js':
-            /*!************************************************************!*\
-  !*** ./node_modules/axios/node_modules/is-buffer/index.js ***!
-  \************************************************************/
-            /*! no static exports found */
-            /***/ function(module, exports) {
-                /*!
-                 * Determine if an object is a Buffer
-                 *
-                 * @author   Feross Aboukhadijeh <https://feross.org>
-                 * @license  MIT
-                 */
-
-                module.exports = function isBuffer(obj) {
-                    return (
-                        obj != null &&
-                        obj.constructor != null &&
-                        typeof obj.constructor.isBuffer === 'function' &&
-                        obj.constructor.isBuffer(obj)
-                    );
-                };
-
-                /***/
-            },
-
         /***/ './node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/assets/js/components/TestComponent.vue?vue&type=script&lang=js&':
             /*!*******************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/assets/js/components/TestComponent.vue?vue&type=script&lang=js& ***!
@@ -2541,6 +2624,8 @@
             /***/ function(module, __webpack_exports__, __webpack_require__) {
                 'use strict';
                 __webpack_require__.r(__webpack_exports__);
+                //
+                //
                 //
                 //
                 //
@@ -7503,11 +7588,10 @@
 
                                                             // Process the value(s)
                                                             // Default process is resolve
-                                                            (special ||
-                                                                deferred.resolveWith)(
-                                                                that,
-                                                                args
-                                                            );
+                                                            (
+                                                                special ||
+                                                                deferred.resolveWith
+                                                            )(that, args);
                                                         }
                                                     },
                                                     // Only normal processors (resolve) catch and reject exceptions
@@ -15833,7 +15917,7 @@
                     /**
                      * @license
                      * Lodash <https://lodash.com/>
-                     * Copyright JS Foundation and other contributors <https://js.foundation/>
+                     * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
                      * Released under MIT license <https://lodash.com/license>
                      * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
                      * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -15843,7 +15927,7 @@
                         var undefined;
 
                         /** Used as the semantic version number. */
-                        var VERSION = '4.17.11';
+                        var VERSION = '4.17.15';
 
                         /** Used as the size to enable large array optimizations. */
                         var LARGE_ARRAY_SIZE = 200;
@@ -19085,11 +19169,7 @@
                                             )
                                         );
                                     });
-
-                                    return result;
-                                }
-
-                                if (isMap(value)) {
+                                } else if (isMap(value)) {
                                     value.forEach(function(subValue, key) {
                                         result.set(
                                             key,
@@ -19103,8 +19183,6 @@
                                             )
                                         );
                                     });
-
-                                    return result;
                                 }
 
                                 var keysFunc = isFull
@@ -20344,8 +20422,8 @@
                                 baseFor(
                                     source,
                                     function(srcValue, key) {
+                                        stack || (stack = new Stack());
                                         if (isObject(srcValue)) {
-                                            stack || (stack = new Stack());
                                             baseMergeDeep(
                                                 object,
                                                 source,
@@ -22807,7 +22885,7 @@
                                                   toInteger(precision),
                                                   292
                                               );
-                                    if (precision) {
+                                    if (precision && nativeIsFinite(number)) {
                                         // Shift with exponential notation to avoid floating-point issues.
                                         // See [MDN](https://mdn.io/round#Examples) for more details.
                                         var pair = (
@@ -23433,8 +23511,8 @@
                                     // Non `Object` object instances with different constructors are not equal.
                                     if (
                                         objCtor != othCtor &&
-                                        ('constructor' in object &&
-                                            'constructor' in other) &&
+                                        'constructor' in object &&
+                                            'constructor' in other &&
                                         !(
                                             typeof objCtor == 'function' &&
                                             objCtor instanceof objCtor &&
@@ -23990,9 +24068,9 @@
                                     (type == 'number' ||
                                         (type != 'symbol' &&
                                             reIsUint.test(value))) &&
-                                    (value > -1 &&
+                                    value > -1 &&
                                         value % 1 == 0 &&
-                                        value < length)
+                                        value < length
                                 );
                             }
 
@@ -24399,7 +24477,7 @@
                             }
 
                             /**
-                             * Gets the value at `key`, unless `key` is "__proto__".
+                             * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
                              *
                              * @private
                              * @param {Object} object The object to query.
@@ -24407,6 +24485,13 @@
                              * @returns {*} Returns the property value.
                              */
                             function safeGet(object, key) {
+                                if (
+                                    key === 'constructor' &&
+                                    typeof object[key] === 'function'
+                                ) {
+                                    return;
+                                }
+
                                 if (key == '__proto__') {
                                     return;
                                 }
@@ -28746,6 +28831,7 @@
                                         }
                                         if (maxing) {
                                             // Handle invocations in a tight loop.
+                                            clearTimeout(timerId);
                                             timerId = setTimeout(
                                                 timerExpired,
                                                 wait
@@ -33748,10 +33834,16 @@
                                 );
 
                                 // Use a sourceURL for easier debugging.
+                                // The sourceURL gets injected into the source that's eval-ed, so be careful
+                                // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
+                                // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
                                 var sourceURL =
                                     '//# sourceURL=' +
-                                    ('sourceURL' in options
-                                        ? options.sourceURL
+                                    (hasOwnProperty.call(options, 'sourceURL')
+                                        ? (options.sourceURL + '').replace(
+                                              /[\r\n]/g,
+                                              ' '
+                                          )
                                         : 'lodash.templateSources[' +
                                           ++templateCounter +
                                           ']') +
@@ -33808,7 +33900,11 @@
 
                                 // If `variable` is not specified wrap a with-statement around the generated
                                 // code to add the data object to the top of the scope chain.
-                                var variable = options.variable;
+                                // Like with sourceURL, we take care to not check the option's prototype,
+                                // as this configuration is a code injection vector.
+                                var variable =
+                                    hasOwnProperty.call(options, 'variable') &&
+                                    options.variable;
                                 if (!variable) {
                                     source =
                                         'with (obj) {\n' + source + '\n}\n';
@@ -36293,12 +36389,11 @@
                             ) {
                                 var lodashFunc = lodash[methodName];
                                 if (lodashFunc) {
-                                    var key = lodashFunc.name + '',
-                                        names =
-                                            realNames[key] ||
-                                            (realNames[key] = []);
-
-                                    names.push({
+                                    var key = lodashFunc.name + '';
+                                    if (!hasOwnProperty.call(realNames, key)) {
+                                        realNames[key] = [];
+                                    }
+                                    realNames[key].push({
                                         name: methodName,
                                         func: lodashFunc
                                     });
@@ -37655,9 +37750,20 @@
                     var _vm = this;
                     var _h = _vm.$createElement;
                     var _c = _vm._self._c || _h;
-                    return _c('div');
+                    return _vm._m(0);
                 };
-                var staticRenderFns = [];
+                var staticRenderFns = [
+                    function() {
+                        var _vm = this;
+                        var _h = _vm.$createElement;
+                        var _c = _vm._self._c || _h;
+                        return _c('div', { staticClass: 'text-center' }, [
+                            _c('h3', [
+                                _vm._v('Say hello to my little test component!')
+                            ])
+                        ]);
+                    }
+                ];
                 render._withStripped = true;
 
                 /***/
@@ -37801,7 +37907,7 @@
                 'use strict';
                 /* WEBPACK VAR INJECTION */ (function(global, setImmediate) {
                     /*!
-                     * Vue.js v2.6.10
+                     * Vue.js v2.6.11
                      * (c) 2014-2019 Evan You
                      * Released under the MIT License.
                      */
@@ -40006,7 +40112,7 @@
                         isNative(setImmediate)
                     ) {
                         // Fallback to setImmediate.
-                        // Techinically it leverages the (macro) task queue,
+                        // Technically it leverages the (macro) task queue,
                         // but it is still a better choice than setTimeout.
                         timerFunc = function() {
                             setImmediate(flushCallbacks);
@@ -40103,7 +40209,7 @@
                                     key +
                                     '" because ' +
                                     'properties starting with "$" or "_" are not proxied in the Vue instance to ' +
-                                    'prevent conflicts with Vue internals' +
+                                    'prevent conflicts with Vue internals. ' +
                                     'See: https://vuejs.org/v2/api/#data',
                                 target
                             );
@@ -41101,7 +41207,7 @@
                             if (typeof key === 'string' && key) {
                                 baseObj[values[i]] = values[i + 1];
                             } else if (key !== '' && key !== null) {
-                                // null is a speical value for explicitly removing a binding
+                                // null is a special value for explicitly removing a binding
                                 warn(
                                     'Invalid value for dynamic directive argument (expected string or null): ' +
                                         key,
@@ -41721,6 +41827,14 @@
                                 config.getTagNamespace(tag);
                             if (config.isReservedTag(tag)) {
                                 // platform built-in elements
+                                if (isDef(data) && isDef(data.nativeOn)) {
+                                    warn(
+                                        'The .native modifier for v-on is only valid on components but it was used on <' +
+                                            tag +
+                                            '>.',
+                                        context
+                                    );
+                                }
                                 vnode = new VNode(
                                     config.parsePlatformTagName(tag),
                                     data,
@@ -41906,7 +42020,7 @@
                             // render self
                             var vnode;
                             try {
-                                // There's no need to maintain a stack becaues all render fns are called
+                                // There's no need to maintain a stack because all render fns are called
                                 // separately from one another. Nested component's render fns are called
                                 // when parent component is patched.
                                 currentRenderingInstance = vm;
@@ -44064,7 +44178,7 @@
                         value: FunctionalRenderContext
                     });
 
-                    Vue.version = '2.6.10';
+                    Vue.version = '2.6.11';
 
                     /*  */
 
@@ -44892,12 +45006,7 @@
                             }
                         }
 
-                        function removeVnodes(
-                            parentElm,
-                            vnodes,
-                            startIdx,
-                            endIdx
-                        ) {
+                        function removeVnodes(vnodes, startIdx, endIdx) {
                             for (; startIdx <= endIdx; ++startIdx) {
                                 var ch = vnodes[startIdx];
                                 if (isDef(ch)) {
@@ -45122,12 +45231,7 @@
                                     insertedVnodeQueue
                                 );
                             } else if (newStartIdx > newEndIdx) {
-                                removeVnodes(
-                                    parentElm,
-                                    oldCh,
-                                    oldStartIdx,
-                                    oldEndIdx
-                                );
+                                removeVnodes(oldCh, oldStartIdx, oldEndIdx);
                             }
                         }
 
@@ -45257,12 +45361,7 @@
                                         insertedVnodeQueue
                                     );
                                 } else if (isDef(oldCh)) {
-                                    removeVnodes(
-                                        elm,
-                                        oldCh,
-                                        0,
-                                        oldCh.length - 1
-                                    );
+                                    removeVnodes(oldCh, 0, oldCh.length - 1);
                                 } else if (isDef(oldVnode.text)) {
                                     nodeOps.setTextContent(elm, '');
                                 }
@@ -45606,12 +45705,7 @@
 
                                     // destroy old node
                                     if (isDef(parentElm)) {
-                                        removeVnodes(
-                                            parentElm,
-                                            [oldVnode],
-                                            0,
-                                            0
-                                        );
+                                        removeVnodes([oldVnode], 0, 0);
                                     } else if (isDef(oldVnode.tag)) {
                                         invokeDestroyHook(oldVnode);
                                     }
@@ -48834,7 +48928,7 @@
                     var startTagClose = /^\s*(\/?)>/;
                     var endTag = new RegExp('^<\\/' + qnameCapture + '[^>]*>');
                     var doctype = /^<!DOCTYPE [^>]+>/i;
-                    // #7298: escape - to avoid being pased as HTML comment when inlined in page
+                    // #7298: escape - to avoid being passed as HTML comment when inlined in page
                     var comment = /^<!\--/;
                     var conditionalComment = /^<!\[/;
 
@@ -49239,7 +49333,7 @@
                     /*  */
 
                     var onRE = /^@|^v-on:/;
-                    var dirRE = /^v-|^@|^:/;
+                    var dirRE = /^v-|^@|^:|^#/;
                     var forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
                     var forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
                     var stripParensRE = /^\(|\)$/g;
@@ -49968,7 +50062,7 @@
                                         ) {
                                             warn$2(
                                                 '<template v-slot> can only appear at the root level inside ' +
-                                                    'the receiving the component',
+                                                    'the receiving component',
                                                 el
                                             );
                                         }
@@ -50684,7 +50778,7 @@
 
                     /*  */
 
-                    var fnExpRE = /^([\w$_]+|\([^)]*?\))\s*=>|^function\s*(?:[\w$]+)?\s*\(/;
+                    var fnExpRE = /^([\w$_]+|\([^)]*?\))\s*=>|^function(?:\s+[\w$]+)?\s*\(/;
                     var fnInvokeRE = /\([^)]*?\);*$/;
                     var simplePathRE = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['[^']*?']|\["[^"]*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*$/;
 
@@ -51722,6 +51816,16 @@
                                                 warn,
                                                 range
                                             );
+                                        } else if (
+                                            name === 'v-slot' ||
+                                            name[0] === '#'
+                                        ) {
+                                            checkFunctionParameterExpression(
+                                                value,
+                                                name + '="' + value + '"',
+                                                warn,
+                                                range
+                                            );
                                         } else if (onRE.test(name)) {
                                             checkEvent(
                                                 value,
@@ -51756,11 +51860,11 @@
                     }
 
                     function checkEvent(exp, text, warn, range) {
-                        var stipped = exp.replace(stripStringRE, '');
-                        var keywordMatch = stipped.match(unaryOperatorsRE);
+                        var stripped = exp.replace(stripStringRE, '');
+                        var keywordMatch = stripped.match(unaryOperatorsRE);
                         if (
                             keywordMatch &&
-                            stipped.charAt(keywordMatch.index - 1) !== '$'
+                            stripped.charAt(keywordMatch.index - 1) !== '$'
                         ) {
                             warn(
                                 'avoid using JavaScript unary operator as property name: ' +
@@ -51847,6 +51951,30 @@
                                     range
                                 );
                             }
+                        }
+                    }
+
+                    function checkFunctionParameterExpression(
+                        exp,
+                        text,
+                        warn,
+                        range
+                    ) {
+                        try {
+                            new Function(exp, '');
+                        } catch (e) {
+                            warn(
+                                'invalid function parameter expression: ' +
+                                    e.message +
+                                    ' in\n\n' +
+                                    '    ' +
+                                    exp +
+                                    '\n\n' +
+                                    '  Raw expression: ' +
+                                    text.trim() +
+                                    '\n',
+                                range
+                            );
                         }
                     }
 
@@ -52456,6 +52584,10 @@
                 );
 
                 __webpack_require__(
+                    /*! ./ApplicationStore */ './resources/assets/js/ApplicationStore.js'
+                );
+
+                __webpack_require__(
                     /*! ./core/register/eventhandler */ './resources/assets/js/core/register/eventhandler.js'
                 );
 
@@ -52465,10 +52597,6 @@
 
                 __webpack_require__(
                     /*! ./core/register/components */ './resources/assets/js/core/register/components.js'
-                );
-
-                __webpack_require__(
-                    /*! ./ApplicationStore */ './resources/assets/js/ApplicationStore.js'
                 );
 
                 var app = new Vue({
@@ -52611,6 +52739,7 @@
                 window.Vue = __webpack_require__(
                     /*! vue */ './node_modules/vue/dist/vue.common.js'
                 );
+                Vue.config.productionTip = false;
                 window.axios = __webpack_require__(
                     /*! axios */ './node_modules/axios/index.js'
                 );
@@ -52776,10 +52905,10 @@
             /*! no static exports found */
             /***/ function(module, exports, __webpack_require__) {
                 __webpack_require__(
-                    /*! /Users/afronorana/Projects/Sprigs/vue-boilerplate/resources/assets/js/app.js */ './resources/assets/js/app.js'
+                    /*! /Users/zana/Projects/vue-boilerplate/resources/assets/js/app.js */ './resources/assets/js/app.js'
                 );
                 module.exports = __webpack_require__(
-                    /*! /Users/afronorana/Projects/Sprigs/vue-boilerplate/resources/assets/sass/app.scss */ './resources/assets/sass/app.scss'
+                    /*! /Users/zana/Projects/vue-boilerplate/resources/assets/sass/app.scss */ './resources/assets/sass/app.scss'
                 );
 
                 /***/
