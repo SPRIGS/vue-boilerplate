@@ -1,8 +1,21 @@
-/* Vendor: 3rd party css
-========================================================================== */
+/*
+========================================================================== 
+    Vendor: 3rd party css
+========================================================================== 
+*/
 
-// Bootstrap
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+/* Bootstrap */
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/utilities/text';
+@import '~bootstrap/scss/utilities/spacing';
+@import '~bootstrap/scss/card';
 
-@import "node_modules/normalize.css/normalize";
-@import "node_modules/family.scss/source/src/family";
+/* Normalize */
+@import '~normalize.css/normalize';
+
+/* Family.scss */
+@import '~family.scss/source/src/family';

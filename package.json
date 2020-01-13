@@ -29,7 +29,7 @@
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
-        "bootstrap-sass": "3.4.1",
+        "bootstrap": "^4.4.1",
         "cross-env": "^6.0.3",
         "family.scss": "^1.0.8",
         "jquery": "^3.4.1",
