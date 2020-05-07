@@ -2620,6 +2620,7 @@
                 //
                 //
                 //
+                //
                 /* harmony default export */ __webpack_exports__['default'] = {
                     props: {},
                     mounted: function mounted() {
@@ -2650,7 +2651,7 @@
                 // module
                 exports.push([
                     module.i,
-                    '#test-component[data-v-dd7c1338] {\n  -webkit-animation: fadeIn-data-v-dd7c1338 300ms 1s linear forwards;\n          animation: fadeIn-data-v-dd7c1338 300ms 1s linear forwards;\n  opacity: 0;\n  padding: 5rem 0;\n}\nimg[data-v-dd7c1338] {\n  display: block;\n  margin: 0 auto 20px;\n  width: 50px;\n}\n@-webkit-keyframes fadeIn-data-v-dd7c1338 {\nfrom {\n    opacity: 0;\n}\nto {\n    opacity: 1;\n}\n}\n@keyframes fadeIn-data-v-dd7c1338 {\nfrom {\n    opacity: 0;\n}\nto {\n    opacity: 1;\n}\n}',
+                    '#test-component[data-v-dd7c1338] {\n  -webkit-animation: fadeIn-data-v-dd7c1338 300ms 1s linear forwards;\n          animation: fadeIn-data-v-dd7c1338 300ms 1s linear forwards;\n  opacity: 0;\n  padding: 5rem 0;\n}\nimg[data-v-dd7c1338] {\n  display: block;\n  margin: 0 auto 20px;\n  width: 70px;\n}\n@-webkit-keyframes fadeIn-data-v-dd7c1338 {\nfrom {\n    opacity: 0;\n}\nto {\n    opacity: 1;\n}\n}\n@keyframes fadeIn-data-v-dd7c1338 {\nfrom {\n    opacity: 0;\n}\nto {\n    opacity: 1;\n}\n}',
                     '',
                 ]);
 
@@ -38786,14 +38787,55 @@
                                                         }),
                                                         _vm._v(' '),
                                                         _c(
-                                                            'h3',
+                                                            'h1',
                                                             {
-                                                                staticClass:
-                                                                    'text-center',
+                                                                staticStyle: {
+                                                                    'line-height':
+                                                                        '1.5',
+                                                                },
                                                             },
                                                             [
                                                                 _vm._v(
-                                                                    'Say hello to my little vue component!'
+                                                                    'Welcome to '
+                                                                ),
+                                                                _c('br'),
+                                                                _vm._v(' '),
+                                                                _c(
+                                                                    'a',
+                                                                    {
+                                                                        staticStyle: {
+                                                                            'font-family':
+                                                                                "'Rubik', sans-serif",
+                                                                            'background-color':
+                                                                                '#2C2C2C',
+                                                                            color:
+                                                                                '#fff',
+                                                                            display:
+                                                                                'inline-block',
+                                                                            padding:
+                                                                                '4px 8px',
+                                                                            'text-decoration':
+                                                                                'none!important',
+                                                                            'border-radius':
+                                                                                '2px',
+                                                                        },
+                                                                        attrs: {
+                                                                            href:
+                                                                                'https://sprigs.eu/',
+                                                                            target:
+                                                                                '_blank',
+                                                                        },
+                                                                    },
+                                                                    [
+                                                                        _vm._v(
+                                                                            'SPRIGS_'
+                                                                        ),
+                                                                    ]
+                                                                ),
+                                                                _vm._v(' '),
+                                                                _c('br'),
+                                                                _vm._v(
+                                                                    'Vue.js boilerplate!'
                                                                 ),
                                                             ]
                                                         ),
@@ -53816,10 +53858,12 @@
                 window.Promise = __webpack_require__(
                     /*! promise */ './node_modules/promise/index.js'
                 );
+                console.log('asd');
                 window.Vue = __webpack_require__(
                     /*! vue */ './node_modules/vue/dist/vue.common.js'
                 );
-                Vue.config.productionTip = false;
+                console.log(Vue); // Vue.config.productionTip = false;
+
                 window.axios = __webpack_require__(
                     /*! axios */ './node_modules/axios/index.js'
                 );

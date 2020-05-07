@@ -14,6 +14,9 @@
     
     <link href="public/assets/web/dist/css/app.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Rubik&display=swap');
+    </style>
 </head>
 
 <body>

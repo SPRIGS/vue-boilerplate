@@ -1,6 +1,7 @@
 <template>
     <div id="test-component">
         <div class="container">
+
             <div class="row">
                 <div class="col-6 offset-3">
                     <div class="card">
@@ -11,7 +12,7 @@
                                 alt="vue-logo"
                                 class="text-center"
                             />
-                            <h3 class="text-center">Say hello to my little vue component!</h3>
+                            <h1 style="line-height: 1.5">Welcome to <br> <a href="https://sprigs.eu/" target="_blank" style="font-family: 'Rubik', sans-serif; background-color: #2C2C2C; color:#fff; display: inline-block; padding: 4px 8px; text-decoration: none!important; border-radius: 2px;">SPRIGS_</a> <br>Vue.js boilerplate!</h1>
                         </div>
                     </div>
                 </div>
@@ -43,7 +44,7 @@ export default {
 img {
     display: block;
     margin: 0 auto 20px;
-    width: 50px;
+    width: 70px;
 }
 
 @keyframes fadeIn {
