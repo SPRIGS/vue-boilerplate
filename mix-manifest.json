@@ -1,6 +1,4 @@
 {
-    "/public/assets/dist/js/app.js": "/public/assets/dist/js/app.js",
-    "/public/assets/dist/css/app.css": "/public/assets/dist/css/app.css",
-    "/public/assets/dist/js/app.js.map": "/public/assets/dist/js/app.js.map",
-    "/public/assets/dist/css/app.css.map": "/public/assets/dist/css/app.css.map"
+    "/public/assets/web/dist/js/app.js": "/public/assets/web/dist/js/app.js?id=f4686c624839f1d6d21c",
+    "/public/assets/web/dist/css/app.css": "/public/assets/web/dist/css/app.css?id=b95a8bab0c8055e9ab52"
 }

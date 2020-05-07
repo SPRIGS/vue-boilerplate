@@ -16,25 +16,25 @@
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
-        "axios": "^0.19.1",
-        "chalk": "^3.0.0",
+        "axios": "^0.19.2",
+        "chalk": "^4.0.0",
         "hard-source-webpack-plugin": "^0.13.1",
-        "husky": "^4.0.7",
-        "laravel-mix": "^5.0.1",
+        "husky": "^4.2.5",
+        "laravel-mix": "^5.0.4",
         "lodash": "^4.17.15",
-        "prettier": "^1.19.1",
+        "prettier": "^2.0.5",
         "pretty-quick": "^2.0.1",
-        "sass": "^1.24.4",
-        "sass-loader": "^8.0.1",
+        "sass": "^1.26.5",
+        "sass-loader": "^8.0.2",
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
         "bootstrap": "^4.4.1",
-        "cross-env": "^6.0.3",
+        "cross-env": "^7.0.2",
         "family.scss": "^1.0.8",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.1",
         "normalize.css": "8.0.1",
-        "promise": "^8.0.3",
+        "promise": "^8.1.0",
         "vue": "^2.6.11"
     }
 }

@@ -1,24 +1,31 @@
-let mix = require('laravel-mix');
+const mix = require('laravel-mix');
+
+mix.setPublicPath(path.resolve('./'));
 
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 mix.webpackConfig({
-    plugins: [new HardSourceWebpackPlugin()]
+    plugins: [new HardSourceWebpackPlugin()],
 });
 
-/*
- |--------------------------------------------------------------------------
- | Mix Asset Management
- |--------------------------------------------------------------------------
- |
- | Mix provides a clean, fluent API for defining some Webpack build steps
- | for your Laravel application. By default, we are compiling the Sass
- | file for the application as well as bundling up all the JS files.
- |
- */
+mix.copy('resources/assets/js/vendor', 'public/assets/web/dist/js/vendor');
+
+//  mix.browserSync('domain.test');
 
 mix.options({
-    processCssUrls: false
-})
-    .sourceMaps(false, 'source-map')
-    .js('resources/assets/js/app.js', 'public/assets/dist/js/')
-    .sass('resources/assets/sass/app.scss', 'public/assets/dist/css/');
+    processCssUrls: false,
+});
+
+mix.sass('resources/assets/sass/app.scss', 'public/assets/web/dist/css');
+// mix.sourceMaps(false, 'source-map').
+
+mix.styles(
+    ['public/assets/web/dist/css/app.css'],
+    'public/assets/web/dist/css/app.css',
+    './'
+);
+
+mix.version('public/assets/web/dist/css/app.css');
+
+mix.js('resources/assets/js/app.js', 'public/assets/web/dist/js');
+
+mix.version('public/assets/web/dist/js/app.js');
