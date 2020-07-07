@@ -17,6 +17,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css?family=Rubik&display=swap');
     </style>
+    <script>
+        apiEndPoints = {
+            fakeList = 'http://localhost:3000/fakeList'
+        }
+    </script>
 </head>
 
 <body>
