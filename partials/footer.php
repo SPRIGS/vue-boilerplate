@@ -1,7 +1,6 @@
                 <footer>
 
                 </footer>
-
             <!-- #app closing tag -->
             </div>
         </main>

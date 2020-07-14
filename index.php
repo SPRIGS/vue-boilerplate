@@ -1,6 +1,6 @@
 <?php include('partials/header.php'); ?>
 
-<div class="container" style="height: 100vh; display: flex; flex-flow: column wrap; justify-content: center;">
+<div class="container" style="height: 100vh; display: flex; flex-flow: column nowrap; justify-content: center;">
     <test-component class="text-center"></test-component>
 
     <h3>Getting started</h3>

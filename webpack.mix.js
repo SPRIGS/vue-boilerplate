@@ -5,8 +5,12 @@ const mix = require('laravel-mix');
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 mix.webpackConfig({
     plugins: [new HardSourceWebpackPlugin()],
+    output: {
+        chunkFilename:
+            'public/assets/web/dist/js/chunks/[name].js' +
+            (mix.inProduction() ? '?id=[chunkhash]' : ''),
+    },
 });
-
 mix.copy('resources/assets/js/vendor', 'public/assets/web/dist/js/vendor');
 
 mix.browserSync('vue-boilerplate.test');

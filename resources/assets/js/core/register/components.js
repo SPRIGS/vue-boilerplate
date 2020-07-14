@@ -1,5 +1,4 @@
-// Test
-Vue.component(
-    'test-component',
-    require('./../../components/TestComponent.vue').default
-);
+window.TestComponent = () =>
+    import(
+        /* webpackChunkName: "test-component" */ './../../components/TestComponent.vue'
+    );

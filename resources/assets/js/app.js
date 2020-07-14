@@ -7,12 +7,15 @@ require('./core/register/components');
 
 const app = new Vue({
     el: '#app',
+    components: {
+        TestComponent,
+    },
     mounted() {
-        this.$nextTick(function() {});
+        this.$nextTick(function () {});
     },
     data: {
-        store: ApplicationStore
+        store: ApplicationStore,
     },
     events: {},
-    methods: {}
+    methods: {},
 });

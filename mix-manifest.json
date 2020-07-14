@@ -1,4 +1,8 @@
 {
     "/public/assets/web/dist/js/app.js": "/public/assets/web/dist/js/app.js",
-    "/public/assets/web/dist/css/app.css": "/public/assets/web/dist/css/app.css"
+    "/public/assets/web/dist/css/app.css": "/public/assets/web/dist/css/app.css",
+    "/public/assets/web/dist/js/chunks/test-component.js": "/public/assets/web/dist/js/chunks/test-component.js",
+    "/public/assets/web/dist/js/chunks/test-component-2.js": "/public/assets/web/dist/js/chunks/test-component-2.js",
+    "/public/assets/web/dist/js/chunks/vendors~test-component-2.js": "/public/assets/web/dist/js/chunks/vendors~test-component-2.js",
+    "/public/assets/web/dist/js/chunks/vendors~test-component.js": "/public/assets/web/dist/js/chunks/vendors~test-component.js"
 }

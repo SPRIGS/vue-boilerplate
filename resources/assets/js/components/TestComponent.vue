@@ -5,6 +5,7 @@
                 <div class="col-6 offset-3">
                     <div class="card">
                         <div class="card-body">
+                            
                             <div class="card-image"></div>
                             <img
                                 src="https://vuejs.org/images/logo.png"
@@ -29,7 +30,16 @@
     </div>
 </template>
 <script>
+
+
+// let TestComponent2 =
+//         () => import(/* webpackChunkName: "test-component-2" */ './TestComponent2.vue');
+
 export default {
+    components: {
+        // TestComponent2
+    },
+    name: 'test-component',
     props: {},
     mounted() {
         this.$nextTick(function() {});
