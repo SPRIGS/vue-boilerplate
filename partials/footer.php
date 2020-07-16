@@ -1,15 +1,12 @@
-                <footer>
-
-                </footer>
-            <!-- #app closing tag -->
-            </div>
-        </main>
-        
+            </main>
+            <footer>
+            </footer>
+        </div>
         <script src="public/assets/web/dist/js/app.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
         <script>
-            window.ga = function() {
+            window.ga = function () {
                 ga.q.push(arguments)
             };
             ga.q = [];
@@ -19,5 +16,4 @@
         </script>
         <script src="https://www.google-analytics.com/analytics.js" async defer></script>
     </body>
-
 </html>

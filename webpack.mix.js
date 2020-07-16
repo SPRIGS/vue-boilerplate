@@ -11,7 +11,7 @@ mix.webpackConfig({
             (mix.inProduction() ? '?id=[chunkhash]' : ''),
     },
 });
-mix.copy('resources/assets/js/vendor', 'public/assets/web/dist/js/vendor');
+// mix.copy('resources/assets/js/vendor', 'public/assets/web/dist/js/vendor');
 
 mix.browserSync('vue-boilerplate.test');
 

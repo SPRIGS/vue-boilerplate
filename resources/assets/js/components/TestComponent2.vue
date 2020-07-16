@@ -1,7 +1,6 @@
 <template>
     <div id="test-component">
-        
-        <test-component-2 v-if="show" class="text-center"></test-component-2>
+
         <div class="container">
             <div class="row">
                 <div class="col-6 offset-3">
@@ -29,18 +28,17 @@
                 </div>
             </div>
         </div>
-        <div class="button" @click="show=!show">toggle show</div>
     </div>
 </template>
 <script>
 
 
-let TestComponent2 =
-        () => import(/* webpackChunkName: "test-component-2" */ './TestComponent2.vue');
+// let TestComponent2 =
+//         () => import(/* webpackChunkName: "test-component-2" */ './TestComponent2.vue');
 
 export default {
     components: {
-        TestComponent2
+        // TestComponent2
     },
     name: 'test-component',
     props: {},
@@ -48,9 +46,7 @@ export default {
         this.$nextTick(function() {});
     },
     data() {
-        return {
-            show: false
-        };
+        return {};
     },
     computed: {},
     watch: {},
