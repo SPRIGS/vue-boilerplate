@@ -40,16 +40,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-var TestComponent2 = function TestComponent2() {
-  return __webpack_require__.e(/*! import() | test-component-2 */ "test-component-2").then(__webpack_require__.bind(null, /*! ./TestComponent2.vue */ "./resources/assets/js/components/TestComponent2.vue"));
-};
-
+// let TestComponent2 =
+//         () => import(/* webpackChunkName: "test-component-2" */ './TestComponent2.vue');
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    TestComponent2: TestComponent2
+  components: {// TestComponent2
   },
   name: 'test-component',
   props: {},
@@ -57,9 +51,7 @@ var TestComponent2 = function TestComponent2() {
     this.$nextTick(function () {});
   },
   data: function data() {
-    return {
-      show: false
-    };
+    return {};
   },
   computed: {},
   watch: {},
@@ -132,77 +124,55 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { attrs: { id: "test-component" } },
-    [
-      _vm.show
-        ? _c("test-component-2", { staticClass: "text-center" })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm._m(0),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "button",
-          on: {
-            click: function($event) {
-              _vm.show = !_vm.show
-            }
-          }
-        },
-        [_vm._v("toggle show")]
-      )
-    ],
-    1
-  )
+  return _vm._m(0)
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-6 offset-3" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "card-image" }),
-              _vm._v(" "),
-              _c("img", {
-                staticClass: "text-center",
-                attrs: {
-                  src: "https://vuejs.org/images/logo.png",
-                  alt: "vue-logo"
-                }
-              }),
-              _vm._v(" "),
-              _c("h1", { staticStyle: { "line-height": "1.5" } }, [
-                _vm._v(
-                  "\n                            Welcomee to\n                            "
-                ),
-                _c("br"),
+    return _c("div", { attrs: { id: "test-component" } }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-6 offset-3" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "card-image" }),
                 _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticStyle: {
-                      "font-family": "'Rubik', sans-serif",
-                      "background-color": "#2C2C2C",
-                      color: "#fff",
-                      display: "inline-block",
-                      padding: "4px 8px",
-                      "text-decoration": "none!important",
-                      "border-radius": "2px"
+                _c("img", {
+                  staticClass: "text-center",
+                  attrs: {
+                    src: "https://vuejs.org/images/logo.png",
+                    alt: "vue-logo"
+                  }
+                }),
+                _vm._v(" "),
+                _c("h1", { staticStyle: { "line-height": "1.5" } }, [
+                  _vm._v(
+                    "\n                            Welcomee to\n                            "
+                  ),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    {
+                      staticStyle: {
+                        "font-family": "'Rubik', sans-serif",
+                        "background-color": "#2C2C2C",
+                        color: "#fff",
+                        display: "inline-block",
+                        padding: "4px 8px",
+                        "text-decoration": "none!important",
+                        "border-radius": "2px"
+                      },
+                      attrs: { href: "https://sprigs.eu/", target: "_blank" }
                     },
-                    attrs: { href: "https://sprigs.eu/", target: "_blank" }
-                  },
-                  [_vm._v("SPRIGS_")]
-                ),
-                _vm._v(" "),
-                _c("br"),
-                _vm._v("Vue.js boilerplate!\n                        ")
+                    [_vm._v("SPRIGS_")]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v("Vue.js boilerplate!\n                        ")
+                ])
               ])
             ])
           ])
