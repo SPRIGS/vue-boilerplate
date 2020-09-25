@@ -7,3 +7,7 @@ Vue.config.productionTip = false;
 window.axios = require('axios');
 
 window.EventKeys = require('../EventKeys');
+
+// Smoothscroll polyfix for Safari
+window.smoothscroll = require('smoothscroll-polyfill');
+smoothscroll.polyfill();
