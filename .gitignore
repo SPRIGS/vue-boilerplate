@@ -2,3 +2,6 @@
 /.vcode
 /node_modules
 yarn-error.log
+package-lock.json
+mix-manifest.json
+.DS_Store

@@ -17,7 +17,7 @@
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
-        "axios": "^0.20.0",
+        "axios": "^0.21.0",
         "bootstrap-scss": "^4.3.1",
         "browser-sync": "^2.26.7",
         "browser-sync-webpack-plugin": "^2.2.2",
